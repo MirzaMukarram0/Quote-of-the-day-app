@@ -1,0 +1,22 @@
+{
+  "name": "database-service",
+  "version": "1.0.0",
+  "description": "Database initialization and seeding for Quote of the Day App",
+  "main": "init/seed.js",
+  "type": "module",
+  "scripts": {
+    "seed": "node init/seed.js"
+  },
+  "keywords": [
+    "database",
+    "mongodb",
+    "seed"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^8.0.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1"
+  }
+}
