@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import QuoteCard from '../components/QuoteCard'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5001'
+const QUOTE_API = import.meta.env.VITE_QUOTE_API || 'http://localhost:5000'
 
 export default function Favourites(){
   const [favs, setFavs] = useState([])
@@ -13,7 +13,7 @@ export default function Favourites(){
     if(!token){ alert('Please login to view favourites'); return }
     try{
       setLoading(true)
-      const res = await axios.get(`${API_BASE}/favourites`, { headers: { Authorization: `Bearer ${token}` } })
+      const res = await axios.get(`${QUOTE_API}/favourites`, { headers: { Authorization: `Bearer ${token}` } })
       setFavs(res.data.favourites.map(f=>f.quote))
     }catch(err){
       console.error(err)

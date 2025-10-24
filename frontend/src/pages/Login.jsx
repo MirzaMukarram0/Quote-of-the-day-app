@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000'
+const AUTH_API = import.meta.env.VITE_AUTH_API || 'http://localhost:4000'
 
 export default function Login(){
   const [email, setEmail] = useState('')
@@ -14,7 +14,7 @@ export default function Login(){
     e.preventDefault()
     setLoading(true)
     try{
-      const res = await axios.post(`${API_BASE}/auth/login`, { email, password })
+      const res = await axios.post(`${AUTH_API}/auth/login`, { email, password })
       const { token, user } = res.data
       localStorage.setItem('qotd_token', token)
       localStorage.setItem('qotd_user', JSON.stringify(user))

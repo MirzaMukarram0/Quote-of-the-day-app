@@ -1,0 +1,79 @@
+version: "3.9"
+
+services:
+  # 🗄️ MongoDB Database
+  database:
+    build: ./database
+    container_name: quoteapp-database
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - quoteapp-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # 🔐 Auth Service
+  auth-service:
+    build: ./auth-service
+    container_name: quoteapp-auth
+    ports:
+      - "4000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://database:27017/quoteapp
+      - JWT_SECRET=mysecretkey
+      - JWT_EXPIRES_IN=7d
+      - NODE_ENV=production
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - quoteapp-network
+    restart: unless-stopped
+
+  # 💬 Quote Service
+  quote-service:
+    build: ./quote-service
+    container_name: quoteapp-quotes
+    ports:
+      - "5000:5001"
+    environment:
+      - PORT=5001
+      - MONGODB_URI=mongodb://database:27017/quoteapp
+      - JWT_SECRET=mysecretkey
+      - NODE_ENV=production
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - quoteapp-network
+    restart: unless-stopped
+
+  # 🖥️ Frontend (React)
+  frontend:
+    build: ./frontend
+    container_name: quoteapp-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_AUTH_API=http://localhost:4000
+      - VITE_QUOTE_API=http://localhost:5000
+    depends_on:
+      - auth-service
+      - quote-service
+    networks:
+      - quoteapp-network
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+
+networks:
+  quoteapp-network:
+    driver: bridge

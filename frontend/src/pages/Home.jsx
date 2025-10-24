@@ -3,7 +3,7 @@ import axios from 'axios'
 import QuoteCard from '../components/QuoteCard'
 import { motion } from 'framer-motion'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5001'
+const QUOTE_API = import.meta.env.VITE_QUOTE_API || 'http://localhost:5000'
 
 export default function Home(){
   const [quote, setQuote] = useState(null)
@@ -13,7 +13,7 @@ export default function Home(){
   async function fetchQuote(){
     try{
       setLoading(true)
-      const res = await axios.get(`${API_BASE}/quotes/random`)
+      const res = await axios.get(`${QUOTE_API}/quotes/random`)
       setQuote(res.data.quote || res.data)
     }catch(err){
       console.error(err)
@@ -31,10 +31,10 @@ export default function Home(){
     try{
       const headers = { Authorization: `Bearer ${token}` }
       if(!favourited){
-        await axios.post(`${API_BASE}/favourites/add/${quote._id}`, {}, { headers })
+        await axios.post(`${QUOTE_API}/favourites/add/${quote._id}`, {}, { headers })
         setFavourited(true)
       } else {
-        await axios.delete(`${API_BASE}/favourites/remove/${quote._id}`, { headers })
+        await axios.delete(`${QUOTE_API}/favourites/remove/${quote._id}`, { headers })
         setFavourited(false)
       }
     }catch(err){
